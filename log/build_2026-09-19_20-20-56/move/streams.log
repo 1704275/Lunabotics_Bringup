@@ -1,0 +1,56 @@
+[0.009s] Invoking command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/src/move -DCMAKE_INSTALL_PREFIX=/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move
+[0.092s] -- The C compiler identification is GNU 13.3.0
+[0.150s] -- The CXX compiler identification is GNU 13.3.0
+[0.157s] -- Detecting C compiler ABI info
+[0.212s] -- Detecting C compiler ABI info - done
+[0.216s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.217s] -- Detecting C compile features
+[0.217s] -- Detecting C compile features - done
+[0.221s] -- Detecting CXX compiler ABI info
+[0.265s] -- Detecting CXX compiler ABI info - done
+[0.270s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.270s] -- Detecting CXX compile features
+[0.270s] -- Detecting CXX compile features - done
+[0.276s] -- Found ament_cmake: 2.5.6 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.344s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.415s] -- Found ament_lint_auto: 0.17.5 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[0.464s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.464s] -- Configured 'flake8' exclude dirs and/or files: 
+[0.464s] -- Added test 'lint_cmake' to check CMake code style
+[0.465s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.465s] -- Added test 'xmllint' to check XML markup files
+[0.466s] -- Configuring done (0.4s)
+[0.468s] -- Generating done (0.0s)
+[0.469s] -- Build files have been written to: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move
+[0.473s] Invoked command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/src/move -DCMAKE_INSTALL_PREFIX=/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move
+[0.473s] Invoking command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move -- -j4 -l4
+[0.489s] Invoked command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move -- -j4 -l4
+[0.493s] Invoking command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move
+[0.496s] -- Install configuration: ""
+[0.496s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/lib/move/publisher
+[0.496s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/launch
+[0.496s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/launch/sim.launch.py
+[0.496s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/models
+[0.496s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/models/vehicle_blue
+[0.496s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/models/vehicle_blue/model.config
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/models/vehicle_blue/model.sdf
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/worlds
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/worlds/building_robot.sdf
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/rviz
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/rviz/vehicle.rviz
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/ament_index/resource_index/package_run_dependencies/move
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/ament_index/resource_index/parent_prefix_path/move
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/environment/ament_prefix_path.sh
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/environment/ament_prefix_path.dsv
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/environment/path.sh
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/environment/path.dsv
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/local_setup.bash
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/local_setup.sh
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/local_setup.zsh
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/local_setup.dsv
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/package.dsv
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/ament_index/resource_index/packages/move
+[0.497s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/cmake/moveConfig.cmake
+[0.498s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/cmake/moveConfig-version.cmake
+[0.498s] -- Installing: /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/install/move/share/move/package.xml
+[0.498s] Invoked command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move

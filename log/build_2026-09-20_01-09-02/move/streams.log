@@ -1,5 +1,0 @@
-[0.009s] Invoking command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move -- -j4 -l4
-[0.029s] [0mCMake Error: The source directory "/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/src/move" does not exist.
-[0.029s] Specify --help for usage, or press the help button on the CMake GUI.[0m
-[0.030s] gmake: *** [Makefile:226: cmake_check_build_system] Error 1
-[0.032s] Invoked command in '/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move -- -j4 -l4

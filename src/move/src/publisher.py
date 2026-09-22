@@ -38,10 +38,10 @@ class RobotController(Node):
         # ---- TASK 1.2: publisher that drives the robot ---------------------
         # Which topic moves the robot? Find it first (TASK 1.1), then uncomment.
         #
-        # self.move_pub = self.create_publisher(Twist, '<TODO: topic name>', 10)
+        self.move_pub = self.create_publisher(Twist, '/cmd_vel', 10)
         #
         # Then drive it on a timer:
-        # self.move_timer = self.create_timer(0.1, self.send_move_cmd)
+        self.move_timer = self.create_timer(0.1, self.send_move_cmd)
 
         # ---- TASK 1.3: the path you chose ----------------------------------
         # Pick a route that gets the robot around the wall, and represent it
@@ -50,7 +50,22 @@ class RobotController(Node):
         #
         # Document HERE why you chose this path and this representation.
         # That reasoning is a large part of what we are evaluating.
-        self.path = None
+        # (linear_x m/s, angular_z rad/s, duration s)
+        # this is manually set for task 1. I purposefully set a wide berth since there
+        # will be drift
+        self.path = [
+            (0.0, 0.5, 3.14),  # turn ~90 deg left
+            (0.5, 0.0, 10),   # drive forward
+            (0.0, -0.5, 3.3),  # turn ~90 deg right
+            (0.5, 0.0, 15),   # drive past the wall
+            (0.0, -0.5, 3.3),  # turn ~90 deg right
+            (0.5, 0.0, 10),   # drive behind wall
+            (0.0, 0.5, 3.14),  # turn ~90 deg left
+        ]
+        # Keeps track of which segment we are on 
+        self.segment_idx = 0
+        # keeps track of how long we were on a certain segment
+        self.segment_start = self.get_clock().now()
 
         # ---- TASK 2.2: subscriber for the robot's 6D pose ------------------
         # One of the two onboard sensors reports 6D data. Find it (TASK 2.1).
@@ -93,7 +108,18 @@ class RobotController(Node):
 
         TODO: build the Twist and publish it on self.move_pub.
         """
-        raise NotImplementedError('TASK 1.2')
+        cmd = Twist()
+        if self.segment_idx < len(self.path):
+            lin, ang, dur = self.path[self.segment_idx]
+            elapsed = (self.get_clock().now() - self.segment_start).nanoseconds / 1e9
+            if elapsed >= dur:
+                self.segment_idx += 1
+                self.segment_start = self.get_clock().now()
+            else:
+                cmd.linear.x = lin
+                cmd.angular.z = ang
+        # after the last segment, cmd stays all zeros, so the robot stops
+        self.move_pub.publish(cmd)
 
     # -----------------------------------------------------------------------
     # TASK 2.3 -- compare reported position against ground truth

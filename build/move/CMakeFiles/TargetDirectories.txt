@@ -1,9 +1,0 @@
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/uninstall.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/move_uninstall.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/test.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/edit_cache.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/rebuild_cache.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/list_install_components.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/install.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/install/local.dir
-/home/diqiux/robotics/lunabotics/Lunabotics_Bringup/build/move/CMakeFiles/install/strip.dir

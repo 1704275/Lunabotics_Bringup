@@ -50,7 +50,10 @@ class RobotController(Node):
         #
         # Document HERE why you chose this path and this representation.
         # That reasoning is a large part of what we are evaluating.
-        # Instead of timing each segment and hoping it goes through.
+        # Instead of timing each segment and giving a fixed acceleration, I am using waypoint navigation
+        # this reduces the error caused by manually timing unalignment. I'm going right because
+        # it is a wider curve that is easier to navigate. I pulled these coordinate points from 
+        # the sdf file directly.
         self.path = [(3.0, -4.0), (8.0, -4.0), (8.0, 0.0)]
         self.wp_idx = 0
         self.pose = None            # (x, y, yaw), set by on_odom

@@ -180,7 +180,7 @@ class RobotController(Node):
 
         if delta > self.error_thresh:
             self.error_pub.publish(Float64(data=delta))
-        self.get_logger().info(f'delta={delta:.4f}')
+        # self.get_logger().info(f'delta={delta:.4f}')
 
     # -----------------------------------------------------------------------
     # TASK 3.3 -- classify a single lidar point
@@ -196,7 +196,9 @@ class RobotController(Node):
         # The wall is retro 0 ("dust"), the pillar retro 2000. Both span the
         # lidar's height, so z cannot separate them. Intensity is the only
         # thing that does.
-        return point[3] > 100.0
+        if not all(math.isfinite(point[f]) for f in ('x', 'y', 'z')):
+            return False
+        return point['intensity'] > 100.0
 
     # -----------------------------------------------------------------------
     # TASK 3.2 -- filter the scan and republish what matters
@@ -210,14 +212,15 @@ class RobotController(Node):
 
         TODO: keep only the obstacle points and publish on self.obstacle_pub.
         """
-        vals = {round(p[3]) for p in point_cloud2.read_points(
+        vals = {round(p['intensity']) for p in point_cloud2.read_points(
                     msg, field_names=('x', 'y', 'z', 'intensity'))}
-        self.get_logger().info(f'intensities: {sorted(vals)}', throttle_duration_sec=2.0)
-        pts = [p for p in point_cloud2.read_points(
+        # self.get_logger().info(f'intensities: {sorted(vals)}', throttle_duration_sec=2.0)
+        pts = [(p['x'], p['y'], p['z'])
+               for p in point_cloud2.read_points(
                    msg, field_names=('x', 'y', 'z', 'intensity'))
                if self.is_obstacle(p)]
         self.obstacle_pub.publish(
-            point_cloud2.create_cloud_xyz32(msg.header, [p[:3] for p in pts]))
+            point_cloud2.create_cloud_xyz32(msg.header, pts))
 
 
 def main(args=None):

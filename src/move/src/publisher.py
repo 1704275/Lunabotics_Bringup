@@ -13,14 +13,14 @@ confirm your workspace is built and sourced before you write any logic.
 Each task is marked with a TASK n.n comment matching the README. Commented-out lines are
 deliberate: uncomment and complete them.
 """
-
+import math
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import PointCloud2
+from sensor_msgs.msg import PointCloud2, Imu
 from sensor_msgs_py import point_cloud2
 from std_msgs.msg import Float64
 
@@ -70,19 +70,30 @@ class RobotController(Node):
         # ---- TASK 2.2: subscriber for the robot's 6D pose ------------------
         # One of the two onboard sensors reports 6D data. Find it (TASK 2.1).
         #
-        # self.robot_pos_sub = self.create_subscription(
-        #     <TODO: msg type>,
-        #     '<TODO: topic name>',
-        #     self.on_robot_pos,
-        #     qos_profile_sensor_data,
-        # )
+        self.robot_pos_sub = self.create_subscription(
+            Imu,
+            '/imu',
+            self.on_robot_pos,
+            qos_profile_sensor_data,
+        )
 
         # ---- TASK 2.3: where the measured-vs-actual error goes -------------
-        # self.error_pub = self.create_publisher(Float64, '/error', 10)
+        self.error_pub = self.create_publisher(Float64, '/error', 10)
         #
         # Hint: ground truth for "actual" is published by the simulator on the
         # robot's odometry topic (nav_msgs/Odometry). Deciding what to compare,
         # and in which frame, is part of the task.
+
+        # ground truth from the simulator
+        self.odom_sub = self.create_subscription(
+            Odometry, '/model/vehicle_blue/odometry',
+            self.on_odom, qos_profile_sensor_data)
+
+        # latest ground-truth yaw, set by on_odom
+        self.truth_yaw = None
+        # IMU dead-reckoned yaw, integrated in on_robot_pos
+        self.imu_yaw = 0.0
+        self.last_stamp = None
 
         # ---- TASK 3: lidar in, filtered obstacles out ----------------------
         # The lidar has a single vertical sample, so this cloud is one flat
@@ -124,6 +135,15 @@ class RobotController(Node):
     # -----------------------------------------------------------------------
     # TASK 2.3 -- compare reported position against ground truth
     # -----------------------------------------------------------------------
+
+    def quat_to_yaw(self, q):
+        """Extract yaw (rotation about z) from a quaternion."""
+        return math.atan2(2.0 * (q.w * q.z + q.x * q.y),
+                            1.0 - 2.0 * (q.y ** 2 + q.z ** 2))
+    def on_odom(self, msg):
+        # Ground truth from the simulator, in the odom frame.
+        self.truth_yaw = self.quat_to_yaw(msg.pose.pose.orientation)
+
     def on_robot_pos(self, msg):
         """Compare the sensor's idea of where we are against the truth.
 
@@ -132,7 +152,27 @@ class RobotController(Node):
 
         TODO: decide what "delta" means here and justify it in a comment.
         """
-        raise NotImplementedError('TASK 2.3')
+        stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+        if self.last_stamp is None:
+            self.last_stamp = stamp
+            return
+        dt = stamp - self.last_stamp
+        self.last_stamp = stamp
+        if dt <= 0.0:
+            return
+
+        self.imu_yaw += msg.angular_velocity.z * dt
+
+        if self.truth_yaw is None:
+            return  # no ground truth yet
+
+        # Wrap into [-pi, pi] so 359 deg vs 1 deg reads as 2 deg, not 358.
+        delta = abs(math.atan2(math.sin(self.imu_yaw - self.truth_yaw),
+                               math.cos(self.imu_yaw - self.truth_yaw)))
+
+        # if delta > self.error_thresh:
+        self.error_pub.publish(Float64(data=delta))
+        self.get_logger().info(f'delta={delta:.4f}')
 
     # -----------------------------------------------------------------------
     # TASK 3.3 -- classify a single lidar point

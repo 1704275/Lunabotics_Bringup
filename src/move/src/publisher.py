@@ -33,7 +33,7 @@ class RobotController(Node):
 
         # Publish to /error when the position delta exceeds this (TASK 2.3).
         # This is a starting value -- justify whatever you settle on.
-        self.error_thresh = 0.5
+        self.error_thresh = 0.7
 
         # ---- TASK 1.2: publisher that drives the robot ---------------------
         # Which topic moves the robot? Find it first (TASK 1.1), then uncomment.
@@ -50,22 +50,11 @@ class RobotController(Node):
         #
         # Document HERE why you chose this path and this representation.
         # That reasoning is a large part of what we are evaluating.
-        # (linear_x m/s, angular_z rad/s, duration s)
-        # this is manually set for task 1. I purposefully set a wide berth since there
-        # will be drift
-        self.path = [
-            (0.0, 0.5, 3.14),  # turn ~90 deg left
-            (0.5, 0.0, 10),   # drive forward
-            (0.0, -0.5, 3.3),  # turn ~90 deg right
-            (0.5, 0.0, 15),   # drive past the wall
-            (0.0, -0.5, 3.3),  # turn ~90 deg right
-            (0.5, 0.0, 10),   # drive behind wall
-            (0.0, 0.5, 3.14),  # turn ~90 deg left
-        ]
-        # Keeps track of which segment we are on 
-        self.segment_idx = 0
-        # keeps track of how long we were on a certain segment
-        self.segment_start = self.get_clock().now()
+        # Instead of timing each segment and hoping it goes through.
+        self.path = [(3.0, -4.0), (8.0, -4.0), (8.0, 0.0)]
+        self.wp_idx = 0
+        self.pose = None            # (x, y, yaw), set by on_odom
+        self.pos_tol = 0.15         # m, "close enough" to a waypoint
 
         # ---- TASK 2.2: subscriber for the robot's 6D pose ------------------
         # One of the two onboard sensors reports 6D data. Find it (TASK 2.1).
@@ -120,16 +109,31 @@ class RobotController(Node):
         TODO: build the Twist and publish it on self.move_pub.
         """
         cmd = Twist()
-        if self.segment_idx < len(self.path):
-            lin, ang, dur = self.path[self.segment_idx]
-            elapsed = (self.get_clock().now() - self.segment_start).nanoseconds / 1e9
-            if elapsed >= dur:
-                self.segment_idx += 1
-                self.segment_start = self.get_clock().now()
-            else:
-                cmd.linear.x = lin
-                cmd.angular.z = ang
-        # after the last segment, cmd stays all zeros, so the robot stops
+        if self.pose is None or self.wp_idx >= len(self.path):
+            self.move_pub.publish(cmd)   # no pose yet, or done: stop
+            return
+
+        x, y, yaw = self.pose
+        gx, gy = self.path[self.wp_idx]
+        dx, dy = gx - x, gy - y
+        dist = math.hypot(dx, dy)
+
+        if dist < self.pos_tol:
+            self.wp_idx += 1
+            self.move_pub.publish(cmd)
+            return
+
+        # Heading error, wrapped to [-pi, pi].
+        heading = math.atan2(dy, dx)
+        err = math.atan2(math.sin(heading - yaw), math.cos(heading - yaw))
+
+        # Turn in place until roughly pointed at the goal, then drive.
+        # Proportional control: command scales with error
+        if abs(err) > 0.2:
+            cmd.angular.z = max(-0.5, min(0.5, 1.5 * err))
+        else:
+            cmd.linear.x = min(0.5, 0.8 * dist)
+            cmd.angular.z = max(-0.5, min(0.5, 1.5 * err))
         self.move_pub.publish(cmd)
 
     # -----------------------------------------------------------------------
@@ -140,9 +144,12 @@ class RobotController(Node):
         """Extract yaw (rotation about z) from a quaternion."""
         return math.atan2(2.0 * (q.w * q.z + q.x * q.y),
                             1.0 - 2.0 * (q.y ** 2 + q.z ** 2))
+    
     def on_odom(self, msg):
-        # Ground truth from the simulator, in the odom frame.
-        self.truth_yaw = self.quat_to_yaw(msg.pose.pose.orientation)
+        p = msg.pose.pose.position
+        yaw = self.quat_to_yaw(msg.pose.pose.orientation)
+        self.pose = (p.x, p.y, yaw)
+        self.truth_yaw = yaw
 
     def on_robot_pos(self, msg):
         """Compare the sensor's idea of where we are against the truth.
@@ -150,7 +157,8 @@ class RobotController(Node):
         Publish a Float64 on self.error_pub when the delta exceeds
         self.error_thresh.
 
-        TODO: decide what "delta" means here and justify it in a comment.
+        Since the sampling is done once every second, there is a base error that can be
+        screened out by delta = 0.7
         """
         stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
         if self.last_stamp is None:
@@ -170,8 +178,8 @@ class RobotController(Node):
         delta = abs(math.atan2(math.sin(self.imu_yaw - self.truth_yaw),
                                math.cos(self.imu_yaw - self.truth_yaw)))
 
-        # if delta > self.error_thresh:
-        self.error_pub.publish(Float64(data=delta))
+        if delta > self.error_thresh:
+            self.error_pub.publish(Float64(data=delta))
         self.get_logger().info(f'delta={delta:.4f}')
 
     # -----------------------------------------------------------------------

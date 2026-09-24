@@ -88,14 +88,14 @@ class RobotController(Node):
         # The lidar has a single vertical sample, so this cloud is one flat
         # row of points at the sensor's height -- not a 3D volume.
         #
-        # self.lidar_sub = self.create_subscription(
-        #     PointCloud2,
-        #     '/lidar/points',
-        #     self.on_lidar,
-        #     qos_profile_sensor_data,
-        # )
-        # self.obstacle_pub = self.create_publisher(
-        #     PointCloud2, '/obstacle_cloud', 10)
+        self.lidar_sub = self.create_subscription(
+            PointCloud2,
+            '/lidar/points',
+            self.on_lidar,
+            qos_profile_sensor_data,
+        )
+        self.obstacle_pub = self.create_publisher(
+            PointCloud2, '/obstacle_cloud', 10)
 
         self.get_logger().info(
             'robot_controller started (scaffold -- nothing wired up yet)')
@@ -193,7 +193,10 @@ class RobotController(Node):
 
         TODO: decide what separates a pole from the barrier and implement it.
         """
-        raise NotImplementedError('TASK 3.3')
+        # The wall is retro 0 ("dust"), the pillar retro 2000. Both span the
+        # lidar's height, so z cannot separate them. Intensity is the only
+        # thing that does.
+        return point[3] > 100.0
 
     # -----------------------------------------------------------------------
     # TASK 3.2 -- filter the scan and republish what matters
@@ -207,7 +210,14 @@ class RobotController(Node):
 
         TODO: keep only the obstacle points and publish on self.obstacle_pub.
         """
-        raise NotImplementedError('TASK 3.2')
+        vals = {round(p[3]) for p in point_cloud2.read_points(
+                    msg, field_names=('x', 'y', 'z', 'intensity'))}
+        self.get_logger().info(f'intensities: {sorted(vals)}', throttle_duration_sec=2.0)
+        pts = [p for p in point_cloud2.read_points(
+                   msg, field_names=('x', 'y', 'z', 'intensity'))
+               if self.is_obstacle(p)]
+        self.obstacle_pub.publish(
+            point_cloud2.create_cloud_xyz32(msg.header, [p[:3] for p in pts]))
 
 
 def main(args=None):
